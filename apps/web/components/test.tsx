@@ -5,16 +5,15 @@ import { useEffect, useState } from "react";
 
 export default function Users() {
   const [users, setUsers] = useState({});
-  const [isUserAdded, setIsUserAdded] = useState(false);
 
   const addUser = async() => {
     try {
-      setIsUserAdded(false);
-      await axios.post("http://api.todo.aryanbachchu.tech/user");
-      setIsUserAdded(true);
+      await axios.post("http://api.todo.aryanbachchu.tech/user", {
+        username: Math.random().toString(),
+        password: Math.random().toString()
+      });
     } catch (error) {
       console.error(error);
-      setIsUserAdded(false);
     }
   }
 
@@ -24,9 +23,8 @@ export default function Users() {
       const data = response.data;
       setUsers(data.users);
     }
-
     getUsers();
-  }, [users, isUserAdded])
+  }, [users])
 
   return (
     <div style={{
@@ -40,7 +38,8 @@ export default function Users() {
         borderRadius: "10px",
         backgroundColor: "black",
         textAlign: "center",
-        fontSize: "18px"
+        fontSize: "18px",
+        cursor: "pointer"
       }}
       onClick={addUser}
       >

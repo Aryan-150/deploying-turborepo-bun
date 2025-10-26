@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'apps/http-backend/**'
+      - 'packages/**'
+      - '.github/workflows/cd_backend.yml'
+      - 'package.json'
+      - 'turbo.json'
+
 
 jobs:
   deploy_backend:

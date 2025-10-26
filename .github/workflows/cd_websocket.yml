@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'apps/ws-backend/**'
+      - 'packages/**'
+      - '.github/workflows/cd_websocket.yml'
+      - 'package.json'
+      - 'turbo.json'
 
 jobs:
   deploy_wedsocket:

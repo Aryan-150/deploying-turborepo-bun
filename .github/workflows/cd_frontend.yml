@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - '.github/workflows/cd_frontend.yml'
+      - 'package.json'
+      - 'turbo.json'
 
 jobs:
   deploy_frontend:
