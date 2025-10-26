@@ -1,0 +1,37 @@
+name: deploy turborepo to vm
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: build and push to dockerhub
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./docker/Dockerfile.backend
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-backend:${{ github.sha }}
+
+      - name: ssh into vm and the run docker image
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" >& ~/ssh_key
+          chmod 700 ~/ssh_key
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@${{ secrets.VM_HOST }} << 'EOF'
+            echo "hello world"
+            
+
+          EOF
