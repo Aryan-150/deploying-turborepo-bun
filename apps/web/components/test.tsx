@@ -3,28 +3,41 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+const API_BASE_URL = "http://api.todo.aryanbachchu.tech";
+
 export default function Users() {
-  const [users, setUsers] = useState({});
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchUsers = async() => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/users`);
+      const data = response.data;
+      setUsers(data.users);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  }
 
   const addUser = async() => {
+    setIsLoading(true);
     try {
-      await axios.post("http://api.todo.aryanbachchu.tech/user", {
+      await axios.post(`${API_BASE_URL}/user`, {
         username: Math.random().toString(),
         password: Math.random().toString()
       });
+      // Refresh the user list after adding
+      await fetchUsers();
     } catch (error) {
-      console.error(error);
+      console.error("Failed to add user:", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
-    const getUsers = async() => {
-      const response = await axios.get("http://api.todo.aryanbachchu.tech/users");
-      const data = response.data;
-      setUsers(data.users);
-    }
-    getUsers();
-  }, [users])
+    fetchUsers();
+  }, [])
 
   return (
     <div style={{
@@ -39,18 +52,20 @@ export default function Users() {
         backgroundColor: "black",
         textAlign: "center",
         fontSize: "18px",
-        cursor: "pointer"
+        cursor: "pointer",
+        opacity: isLoading ? 0.6 : 1
       }}
       onClick={addUser}
+      disabled={isLoading}
       >
-        Add User
+        {isLoading ? "Adding..." : "Add User"}
       </button>
 
       <div style={{
         textAlign: "center"
       }}>
         <pre>
-          {JSON.stringify(users)}
+          {JSON.stringify(users, null, 2)}
         </pre>
       </div>
     </div>
