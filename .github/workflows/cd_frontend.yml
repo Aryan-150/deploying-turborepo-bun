@@ -22,9 +22,11 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./docker/Dockerfile.backend
+          file: ./docker/Dockerfile.frontend
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-backend:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:${{ github.sha }}
+          build-args:
+            DATABASE_URL = ${{ secrets.DB_URL }}
 
       - name: ssh into vm and the run docker image
         run: |
@@ -32,20 +34,21 @@ jobs:
           chmod 700 ~/ssh_key
           ssh -o StrictHostKeyChecking=no -i ~/ssh_key ubuntu@${{ secrets.VM_HOST }} << 'EOF'
             echo "hello world"
-
+            
             if ! docker network inspect todo-network >/dev/null 2>&1; then
               docker network create todo-network
             fi
 
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/todo-backend:${{ github.sha }}
 
-            if [ "$(docker ps -a -q -f name=todo-backend)" ]; then
-              docker rm -f todo-backend
+            if [ "$(docker ps -a -q -f name=todo-frontend)" ]; then
+              docker rm -f todo-frontend
             fi
 
-            docker run -d --name todo-backend --network todo-app-network \
-            -e DATABASE_URL="${{ secrets.DB_URL }}" -p 8080:8080 \
-            ${{ secrets.DOCKERHUB_USERNAME }}/todo-backend:${{ github.sha }}
+            docker run -d --name todo-frontend --network todo-app-network \
+            -e DATABASE_URL="${{ secrets.DB_URL }}" -p 3000:3000 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:${{ github.sha }}
 
             docker image prune --all --force
+
           EOF
