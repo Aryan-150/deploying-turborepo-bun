@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  deploy_frontend:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
@@ -48,7 +48,5 @@ jobs:
             docker run -d --name todo-frontend --network todo-app-network \
             -e DATABASE_URL="${{ secrets.DB_URL }}" -p 3000:3000 \
             ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:${{ github.sha }}
-
-            docker image prune --all --force
 
           EOF

@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  deploy_wedsocket:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
@@ -46,7 +46,5 @@ jobs:
             docker run -d --name todo-websocket --network todo-app-network \
             -e DATABASE_URL="${{ secrets.DB_URL }}" -p 8081:8081 \
             ${{ secrets.DOCKERHUB_USERNAME }}/todo-websocket:${{ github.sha }}
-
-            docker image prune --all --force
 
           EOF

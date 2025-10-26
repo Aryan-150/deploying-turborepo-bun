@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  deploy_backend:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
@@ -47,5 +47,4 @@ jobs:
             -e DATABASE_URL="${{ secrets.DB_URL }}" -p 8080:8080 \
             ${{ secrets.DOCKERHUB_USERNAME }}/todo-backend:${{ github.sha }}
 
-            docker image prune --all --force
           EOF
