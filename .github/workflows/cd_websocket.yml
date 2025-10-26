@@ -43,7 +43,7 @@ jobs:
               docker rm -f todo-websocket
             fi
 
-            docker run -d --name todo-websocket --network todo-app-network \
+            docker run -d --name todo-websocket --network todo-network \
             -e DATABASE_URL="${{ secrets.DB_URL }}" -p 8081:8081 \
             ${{ secrets.DOCKERHUB_USERNAME }}/todo-websocket:${{ github.sha }}
 

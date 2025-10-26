@@ -45,7 +45,7 @@ jobs:
               docker rm -f todo-frontend
             fi
 
-            docker run -d --name todo-frontend --network todo-app-network \
+            docker run -d --name todo-frontend --network todo-network \
             -e DATABASE_URL="${{ secrets.DB_URL }}" -p 3000:3000 \
             ${{ secrets.DOCKERHUB_USERNAME }}/todo-frontend:${{ github.sha }}
 
